@@ -8,8 +8,8 @@ class Event {
   final int likesCount;
   final String type;
   final int price;
-  final String profile;
-  final Map<String, dynamic> artist;
+  final dynamic profile;
+  final List<dynamic> artists;
 
   Event(
       {required this.id,
@@ -21,7 +21,7 @@ class Event {
       required this.likesCount,
       required this.type,
       required this.price,
-      required this.artist,
+      required this.artists,
       required this.profile});
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -35,7 +35,7 @@ class Event {
       likesCount: json['likes_count'],
       type: json['type'],
       price: json['price'],
-      artist: json['artist'],
+      artists: json['artists'],
       profile: json['profile'],
     );
   }

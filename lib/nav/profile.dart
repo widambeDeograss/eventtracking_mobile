@@ -29,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   dynamic follows = {};
   String? currentUser;
   bool isFollowing = false;
+  dynamic profile;
 
   _fetchAllEvents() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -48,8 +49,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       var resFollows = await CallApi().authenticatedRequest({},
           "${AppConstants.apiBaseUrl}${AppConstants.followers}?querytype=single&&userId${userAuthProvider.authState.id}",
           'get');
+      var userRes = await CallApi().authenticatedRequest({},
+          "${AppConstants.apiBaseUrl}${AppConstants.allUsers}?querytype=single&&user_id${userAuthProvider.authState.id}",
+          'get');
       print(res);
       var body = json.decode(res);
+      var userBody = json.decode(userRes);
+      profile  = userBody['profile'];
       var followerRes = json.decode(resFollows);
       follows = followerRes;
       EventList filteredEvents = EventHelper.filterEventsByType(body);
@@ -133,8 +139,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // width: MediaQuery.of(context).size.width - 220,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                              image: const DecorationImage(
-                                  image: AssetImage('assets/RectangleHome.png'),
+                              image:  DecorationImage(
+                                  image:profile == null ? const NetworkImage("https://www.freepik.com/free-vector/user-circles-set_145856997.htm#query=user%20profile&position=13&from_view=keyword&track=ais_user&uuid=dea66171-42e7-4348-9de3-563e306d5f13"):  NetworkImage("${AppConstants.mediaBaseUrl}/${profile}"),
                                   fit: BoxFit.cover),
                             ),
                           ),

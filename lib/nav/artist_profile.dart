@@ -70,11 +70,12 @@ class _ArtistProfileState extends State<ArtistProfile> {
       }
       print(userAuthProvider.authState.id);
       for (var event in allEvents) {
-        print(event.artist['id']);
-
-        if (event.artist['id'] == userAuthProvider.authState.id) {
+         for (var artist in event.artists) {
+            if (artist['id'] == userAuthProvider.authState.id) {
           artistEvent.add(event);
         }
+         }
+
       }
       print(artistEvent);
     } catch (e) {

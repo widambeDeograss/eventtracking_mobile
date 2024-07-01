@@ -228,55 +228,7 @@ class _EventDescriptionState extends State<EventDescription> {
                     const SizedBox(
                       height: 15,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              padding: const EdgeInsets.all(10),
-                              // width: MediaQuery.of(context).size.width - 220,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        "${AppConstants.mediaBaseUrl}${widget.event!.profile}"),
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            AppLargeText(
-                              text: widget.event!.artist["username"],
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 2,
-                            backgroundColor: AppColors.addsOn,
-                            // shape: RoundedRectangleBorder(
-                            //   borderRadius: BorderRadius.circular(
-                            //       10), // Set border radius here
-                            // ),
-                          ),
-                          onPressed: () {
-                            // Navigator.pushReplacement(context,
-                            //     MaterialPageRoute(builder: (_) => const LoginScreen()));
-                          },
-                          child: const Text(
-                            "Follow",
-                            style: TextStyle(
-                                color: AppColors.textColor1,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
+                    OverlappingAvatarRow(artists: widget.event!.artists),
                     const SizedBox(
                       height: 15,
                     ),
@@ -344,6 +296,68 @@ class _EventDescriptionState extends State<EventDescription> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class OverlappingAvatarRow extends StatelessWidget {
+  final List<dynamic> artists;
+
+  OverlappingAvatarRow({required this.artists});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      
+      children: artists.asMap().entries.map((entry) {
+        int idx = entry.key;
+        dynamic artist = entry.value;
+        String? profile = artist['profile'];
+
+        return Row(
+           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                radius: 15,
+                backgroundImage: profile != null
+                    ? NetworkImage('${AppConstants.mediaBaseUrl}$profile')
+                    : null,
+                child: profile == null ? Icon(Icons.person, size: 10) : null,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              AppLargeText(
+                text: artist["username"],
+                size: 14,
+              ),
+                ],
+              ),
+              ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2,
+                            backgroundColor: AppColors.addsOn,
+                            // shape: RoundedRectangleBorder(
+                            //   borderRadius: BorderRadius.circular(
+                            //       10), // Set border radius here
+                            // ),
+                          ),
+                          onPressed: () {
+                            // Navigator.pushReplacement(context,
+                            //     MaterialPageRoute(builder: (_) => const LoginScreen()));
+                          },
+                          child: const Text(
+                            "Follow",
+                            style: TextStyle(
+                                color: AppColors.textColor1,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+              
+            ]);
+      }).toList(),
     );
   }
 }

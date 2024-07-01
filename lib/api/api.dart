@@ -52,6 +52,16 @@ class CallApi {
         );
         print(res);
       }
+      else if (type == "delete") {
+        res = await http.delete(
+          Uri.parse(
+            apiUrl,
+          ),
+          body: jsonEncode(data),
+          headers: _setHeaders(),
+        );
+        print(res);
+      }
       return res.body;
     } catch (e) {
       print(e);

@@ -85,6 +85,98 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
     return value;
   }
 
+  Future<void> _followArtist(String? artistId) async {
+    final userAuthProvider =
+        Provider.of<UserAuthProvider>(context, listen: false);
+
+    try {
+      var res = await CallApi().authenticatedRequest({
+        'follower': userAuthProvider.authState.id,
+        'artist': artistId,
+      }, "${AppConstants.apiBaseUrl}${AppConstants.followers}", 'post');
+
+      var body = json.decode(res);
+      if (body['save'] == true) {
+        Fluttertoast.showToast(
+            msg: "Successfully followed the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        // Refresh follows list
+        _fetchAllUsers();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed to follow the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Error: Unable to follow the artist",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
+  Future<void> _unfollowArtist(String? artistId) async {
+    final userAuthProvider =
+        Provider.of<UserAuthProvider>(context, listen: false);
+
+    try {
+      var res = await CallApi().authenticatedRequest({
+        'follower': userAuthProvider.authState.id,
+        'artist': artistId,
+      }, "${AppConstants.apiBaseUrl}${AppConstants.followers}", 'delete');
+     print(res);
+      var body = json.decode(res);
+      if (body['save'] == true) {
+        Fluttertoast.showToast(
+            msg: "Successfully unfollowed the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        // Refresh follows list
+        _fetchAllUsers();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed to unfollow the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Error: Unable to unfollow the artist",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,114 +215,121 @@ class _ArtistsScreenState extends State<ArtistsScreen> {
                 height: 20,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: allArtists.length,
-                  itemBuilder: (context, index) {
-                    Artist artist = allArtists[index];
+                child: isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: allArtists.length,
+                        itemBuilder: (context, index) {
+                          Artist artist = allArtists[index];
 
-                    return Column(
-                      children: [
-                        InkWell(
-                          onTap: () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ViewArtistProfile(
-                                        artistId: artist.id,
-                                      )),
-                            ),
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          return Column(
                             children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(100),
-                                      border: Border.all(
-                                          width: 1,
-                                          color: AppColors.textColor1),
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                              "${AppConstants.mediaBaseUrl}/${artist.profile}"),
-                                          fit: BoxFit.cover),
+                              InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ViewArtistProfile(
+                                              artistId: artist.id,
+                                            )),
+                                  ),
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          height: 30,
+                                          width: 30,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            border: Border.all(
+                                                width: 1,
+                                                color: AppColors.textColor1),
+                                            image: DecorationImage(
+                                                image: NetworkImage(
+                                                    "${AppConstants.mediaBaseUrl}/${artist.profile}"),
+                                                fit: BoxFit.cover),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AppLargeText(
+                                              text: '${artist.email}',
+                                              size: 16,
+                                            ),
+                                            AppSmallText(
+                                                text: '${artist.username}')
+                                          ],
+                                        )
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AppLargeText(
-                                        text: '${artist.email}',
-                                        size: 16,
-                                      ),
-                                      AppSmallText(text: '${artist.username}')
-                                    ],
-                                  )
-                                ],
+                                    _isArtistFollowed(artist.id)
+                                        ? ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 2,
+                                              backgroundColor:
+                                                  AppColors.addsOn,
+                                              // shape: RoundedRectangleBorder(
+                                              //   borderRadius: BorderRadius.circular(
+                                              //       10), // Set border radius here
+                                              // ),
+                                            ),
+                                            onPressed: () {
+                                              _unfollowArtist(artist.id);
+                                            },
+                                            child: const Text(
+                                              "Unfollow",
+                                              style: TextStyle(
+                                                  color: AppColors.textColor1,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          )
+                                        : ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 2,
+                                              backgroundColor:
+                                                  AppColors.addsOn,
+                                              // shape: RoundedRectangleBorder(
+                                              //   borderRadius: BorderRadius.circular(
+                                              //       10), // Set border radius here
+                                              // ),
+                                            ),
+                                            onPressed: () {
+                                              _followArtist(artist.id);
+                                            },
+                                            child: const Text(
+                                              "Follow",
+                                              style: TextStyle(
+                                                  color: AppColors.textColor1,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                  ],
+                                ),
                               ),
-                              _isArtistFollowed(artist.id)
-                                  ? ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 2,
-                                        backgroundColor: AppColors.addsOn,
-                                        // shape: RoundedRectangleBorder(
-                                        //   borderRadius: BorderRadius.circular(
-                                        //       10), // Set border radius here
-                                        // ),
-                                      ),
-                                      onPressed: () {
-                                        // Navigator.pushReplacement(context,
-                                        //     MaterialPageRoute(builder: (_) => const LoginScreen()));
-                                      },
-                                      child: const Text(
-                                        "Unfollow",
-                                        style: TextStyle(
-                                            color: AppColors.textColor1,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    )
-                                  : ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 2,
-                                        backgroundColor: AppColors.addsOn,
-                                        // shape: RoundedRectangleBorder(
-                                        //   borderRadius: BorderRadius.circular(
-                                        //       10), // Set border radius here
-                                        // ),
-                                      ),
-                                      onPressed: () {
-                                        // Navigator.pushReplacement(context,
-                                        //     MaterialPageRoute(builder: (_) => const LoginScreen()));
-                                      },
-                                      child: const Text(
-                                        "Follow",
-                                        style: TextStyle(
-                                            color: AppColors.textColor1,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
+                              const SizedBox(
+                                height: 10,
+                              )
                             ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        )
-                      ],
-                    );
-                    //   ListTile(
-                    //   title: Text(comments[index]['text']),
-                    //   // Add more comment details as needed
-                    // );
-                  },
-                ),
+                          );
+                          //   ListTile(
+                          //   title: Text(comments[index]['text']),
+                          //   // Add more comment details as needed
+                          // );
+                        },
+                      ),
               ),
             ],
           ),

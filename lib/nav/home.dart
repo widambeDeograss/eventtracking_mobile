@@ -43,12 +43,13 @@ class _HomeScreenState extends State<HomeScreen> {
       var res = await CallApi().authenticatedRequest({},
           "${AppConstants.apiBaseUrl}${AppConstants.allEvents}?querytype=all",
           'get');
-      print(res);
+      // print(res);
       var body = json.decode(res);
-      print(body);
+      // print(body);rrr
       EventList filteredEvents = EventHelper.filterEventsByType(body);
-
+      print(filteredEvents.allEvents);
       print("BongoFleva Events:");
+
       bongoFlevaEvents = filteredEvents.bongoFlevaEvents;
       gospelEvents = filteredEvents.gospelEvents;
       cultureEvents = filteredEvents.cultureEvents;
@@ -154,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.36,
+                      width: MediaQuery.of(context).size.width * 0.9,
                       child: SearchBar(
                         controller: queryController,
                         padding: const MaterialStatePropertyAll<EdgeInsets>(
@@ -164,9 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         leading: const Icon(Icons.search),
                       ),
                     ),
-                    IconButton(
-                        icon: const Icon(Icons.filter_list_outlined),
-                        onPressed: () {}),
+                    // IconButton(
+                    //     icon: const Icon(Icons.filter_list_outlined),
+                    //     onPressed: () {}),
                   ],
                 ),
                 const SizedBox(
@@ -427,19 +428,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 5,
                     ),
-                    Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        image: DecorationImage(
-                            image: NetworkImage(
-                                "${AppConstants.mediaBaseUrl}${event.profile}"),
-                            fit: BoxFit.cover),
-                      ),
+                    OverlappingAvatarRow(
+                      artists: event.artists
                     ),
                     SizedBox(
-                      height: 5,
+                      height:5,
                     ),
                     Row(
                       children: [
@@ -468,5 +461,32 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CircularProgressIndicator(),
           );
         });
+  }
+}
+
+class OverlappingAvatarRow extends StatelessWidget {
+  final List<dynamic> artists;
+
+  OverlappingAvatarRow({required this.artists});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: artists.asMap().entries.map((entry) {
+        int idx = entry.key;
+        dynamic artist = entry.value;
+        String? profile = artist['profile'];
+
+        return Padding(
+          padding: EdgeInsets.only(left: idx == 0 ? 0 : 0),
+          child: CircleAvatar(
+            radius: 15,
+            backgroundImage: profile != null ? NetworkImage('${AppConstants.mediaBaseUrl}$profile') : null,
+            child: profile == null ? Icon(Icons.person, size: 10) : null,
+          ),
+        );
+      }).toList(),
+    );
   }
 }

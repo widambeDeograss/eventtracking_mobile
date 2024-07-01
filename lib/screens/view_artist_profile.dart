@@ -79,10 +79,13 @@ class _ViewArtistProfileState extends State<ViewArtistProfile> {
       // for (var event in filteredEvents.gospelEvents) {
       //   allEvents.add(event);
       // }
-      for (var event in allEvents) {
-        if (event.artist['id'] == widget.artistId) {
+     for (var event in allEvents) {
+         for (var artist in event.artists) {
+            if (artist['id'] == userAuthProvider.authState.id) {
           artistEvent.add(event);
         }
+         }
+
       }
 
       print(fllws.followList);
@@ -110,9 +113,97 @@ class _ViewArtistProfileState extends State<ViewArtistProfile> {
     }
   }
 
-  _postFollow() async {}
+  Future<void> _followArtist(String? artistId) async {
+    final userAuthProvider =
+        Provider.of<UserAuthProvider>(context, listen: false);
 
-  _postUnFollow() async {}
+    try {
+      var res = await CallApi().authenticatedRequest({
+        'follower': userAuthProvider.authState.id,
+        'artist': artistId,
+      }, "${AppConstants.apiBaseUrl}${AppConstants.followers}", 'post');
+
+      var body = json.decode(res);
+      if (body['save'] == true) {
+        Fluttertoast.showToast(
+            msg: "Successfully followed the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        // Refresh follows list
+       _fetchAllEvents();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed to follow the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Error: Unable to follow the artist",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
+  Future<void> _unfollowArtist(String? artistId) async {
+    final userAuthProvider =
+        Provider.of<UserAuthProvider>(context, listen: false);
+
+    try {
+      var res = await CallApi().authenticatedRequest({
+        'follower': userAuthProvider.authState.id,
+        'artist': artistId,
+      }, "${AppConstants.apiBaseUrl}${AppConstants.followers}", 'delete');
+     print(res);
+      var body = json.decode(res);
+      if (body['save'] == true) {
+        Fluttertoast.showToast(
+            msg: "Successfully unfollowed the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        // Refresh follows list
+        _fetchAllEvents();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed to unfollow the artist",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Error: Unable to unfollow the artist",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
 
   @override
   void initState() {
@@ -227,7 +318,7 @@ class _ViewArtistProfileState extends State<ViewArtistProfile> {
                                     // ),
                                   ),
                                   onPressed: () {
-                                    _postUnFollow();
+                                   _unfollowArtist(artistInfo['id']);
                                   },
                                   child: const Text(
                                     "Unfollow",
@@ -248,7 +339,7 @@ class _ViewArtistProfileState extends State<ViewArtistProfile> {
                                     // ),
                                   ),
                                   onPressed: () {
-                                    _postFollow();
+                                    _followArtist(artistInfo['id']);
                                   },
                                   child: const Text(
                                     "Follow",
