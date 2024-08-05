@@ -12,15 +12,15 @@ class AppConstants {
   static const String isFirstTime = 'isFirstTime';
 
   // API URLS
-  static const String apiBaseUrl = 'http://192.168.111.150:8000/';
-  static const String mediaBaseUrl = 'http://192.168.111.150:8000';
-  static const String nidaBaseUrl = 'http://192.168.1.189:5000/api/nida_info';
+  static const String apiBaseUrl = 'http://192.168.37.123:8000/';
+  static const String mediaBaseUrl = 'http://192.168.37.123:800192.168.37.1230';
+  static const String nidaBaseUrl = 'http://192.168.37.123:5000/api/nida_info';
   static const String verifyPhoneUrl = 'user-management/register';
-  static const String apiUserLogin = 'http://192.168.111.150:8000/api/auth/login';
+  static const String apiUserLogin = 'http://192.168.37.123:8000/api/auth/login';
   static const String apiUserRegistration =
-      'http://192.168.111.150:8000/api/auth/register';
+      'http://192.168.37.123:8000/api/auth/register';
   static const String apiUserVerifyOtp =
-      'http://192.168.111.150:8000/app/citizen/auth/verify_user_otp';
+      'http://192.168.37.123:8000/app/citizen/auth/verify_user_otp';
   static const String allEvents = 'api/events';
   static const String tickets = 'api/tickets';
   static const String comments = 'api/comments';

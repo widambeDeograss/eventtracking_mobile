@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/event_setup.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -302,6 +304,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ArtistsScreen(),
+                    ),
+                  );
+                  // Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(
+                          Icons.supervised_user_circle,
+                          color: AppColors.textColor1,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Event setup',
+                        style: TextStyle(color: AppColors.textColor1),
+                      ),
+                    ),
+                  ],
+                ),
+                selected: _selectedIndex == 1,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  AddSetupRequestScreen(),
                     ),
                   );
                   // Navigator.pop(context);
