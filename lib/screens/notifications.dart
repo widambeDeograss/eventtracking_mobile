@@ -66,15 +66,14 @@ class _NotificationsState extends State<Notifications> {
     }
   }
 
-  Future<void> _deleteNotification(int notificationId) async {
+  Future<void> _deleteNotification(dynamic notificationId) async {
     try {
-      // Replace with your API call to delete notification by ID
-      var res = await CallApi().authenticatedRequest(
-        {'id':notificationId},
-        "${AppConstants.apiBaseUrl}${AppConstants.notifications}",
-        'delete',
+        var res = await CallApi().authenticatedRequest(
+        {},
+        "${AppConstants.apiBaseUrl}${AppConstants.notifications}?querytype=delete&&notificationId=$notificationId",
+        'get',
       );
-
+    
       var body = json.decode(res);
       if (body['save'] == true) {
         Fluttertoast.showToast(
@@ -88,13 +87,11 @@ class _NotificationsState extends State<Notifications> {
         );
 
         // Remove the deleted notification from the local list
-        setState(() {
-          notifications.removeWhere((element) => element['id'] == notificationId);
-        });
+        _fetchNotifications();
       } else {
         Fluttertoast.showToast(
           msg: "Failed to delete notification",
-          toastLength: Toast.LENGTH_SHORT,
+          toastLength: Toast.LENGTH_SHORT,``
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.red,

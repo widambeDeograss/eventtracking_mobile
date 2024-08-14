@@ -123,6 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+        final userAuthProvider =
+        Provider.of<UserAuthProvider>(context, listen: false);
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -157,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: MediaQuery.of(context).size.width * 0.8,
                       child: SearchBar(
                         controller: queryController,
                         padding: const MaterialStatePropertyAll<EdgeInsets>(
@@ -276,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                 },
               ),
+             
               ListTile(
                 title: const Row(
                   children: [
@@ -309,6 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Navigator.pop(context);
                 },
               ),
+              if (userAuthProvider.authState.isArtist == "artist")
               ListTile(
                 title: const Row(
                   children: [
@@ -342,6 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Navigator.pop(context);
                 },
               ),
+             
               ListTile(
                 title: const Row(
                   children: [
